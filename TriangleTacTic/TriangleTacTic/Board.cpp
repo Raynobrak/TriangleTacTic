@@ -2,13 +2,11 @@
 
 #include <algorithm>
 
-Board::Board()
-{
+Board::Board() {
 	reset();
 }
 
-TileState Board::getStateAt(size_t index) const
-{
+Symbol Board::getSymbolAt(size_t index) const {
 	if (index >= 0 && index < tiles_.size()) {
 		return tiles_[index];
 	}
@@ -17,27 +15,28 @@ TileState Board::getStateAt(size_t index) const
 	}
 }
 
-TileState Board::getStateAt(size_t col, size_t line) const
-{
-	return getStateAt(coordsToIndex(col, line));
+Symbol Board::getSymbolAt(TilePosition pos) const {
+	return getSymbolAt(coordsToIndex(pos.col, pos.line));
 }
 
-void Board::setStateAt(size_t index, TileState newState)
-{
-	tiles_[index] = newState;
+bool Board::placeSymbolAt(size_t index, Symbol symbol) {
+	if (getSymbolAt(index) == Symbol::None) {
+		tiles_[index] = symbol;
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
-void Board::setStateAt(size_t col, size_t line, TileState newState)
-{
-	setStateAt(coordsToIndex(col, line), newState);
+bool Board::placeSymbolAt(TilePosition pos, Symbol symbol) {
+	return placeSymbolAt(coordsToIndex(pos.col, pos.line), symbol);
 }
 
-void Board::reset()
-{
-	std::fill_n(tiles_, UINT_TILES_COUNT, TileState::Free);
+void Board::reset() {
+	std::fill_n(tiles_, UINT_TILES_COUNT, Symbol::None);
 }
 
-size_t Board::coordsToIndex(size_t col, size_t line)
-{
+size_t Board::coordsToIndex(pos_component_t col, pos_component_t line) {
 	return line * UINT_BOARD_WIDTH + col;
 }

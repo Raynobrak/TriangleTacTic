@@ -1,25 +1,32 @@
 #pragma once
 
 #include <array>
-#include "TileState.h"
+#include "Symbol.h"
+#include "TilePosition.h"
 
-constexpr size_t UINT_BOARD_WIDTH = 5u;
-constexpr size_t UINT_TILES_COUNT = UINT_BOARD_WIDTH * UINT_BOARD_WIDTH;
-
+//
+// Represents the board on which the game takes place.
+// The goal of this class is to encapsulate the accessing logic of the board.
+//
+// For example, the Board makes sure that you cannot overwrite someone else's move (by placing your symbol over it).
+//
 class Board {
 public:
 	Board();
 
-	TileState getStateAt(size_t index) const;
-	TileState getStateAt(size_t col, size_t line) const;
+	Symbol getSymbolAt(size_t index) const;
+	Symbol getSymbolAt(TilePosition pos) const;
 
-	void setStateAt(size_t index, TileState newState);
-	void setStateAt(size_t col, size_t line, TileState newState);
+	bool placeSymbolAt(size_t index, Symbol symbol);
+	bool placeSymbolAt(TilePosition pos, Symbol symbol);
 
 	void reset();
-private:
-	static size_t coordsToIndex(size_t col, size_t line);
 
-	std::array<TileState, UINT_BOARD_WIDTH*UINT_BOARD_WIDTH> tiles_;
+	static constexpr pos_component_t UINT_BOARD_WIDTH = 5u;
+	static constexpr pos_component_t UINT_TILES_COUNT = UINT_BOARD_WIDTH * UINT_BOARD_WIDTH;
+private:
+	static size_t coordsToIndex(pos_component_t col, pos_component_t line);
+
+	std::array<Symbol, UINT_BOARD_WIDTH*UINT_BOARD_WIDTH> tiles_;
 };
 
