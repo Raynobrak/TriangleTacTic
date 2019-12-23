@@ -5,9 +5,11 @@
     <ClInclude Include="Symbol.h" />
     <ClInclude Include="GameCoordinator.h" />
     <ClInclude Include="TilePosition.h" />
+    <ClInclude Include="MoveValidity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="GameCoordinator.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

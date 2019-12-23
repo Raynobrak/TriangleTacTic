@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Board.h"
+#include "MoveValidity.h"
 
 //
 // Represents the game "referee".
@@ -13,17 +14,21 @@ class GameCoordinator
 public:
 	GameCoordinator();
 
-	// Returns true if the given symbol has to play.
-	// NOTE : If it's the very first turn of the game, any symbol that tries to play first will be given the right to.
-	bool hasRightToPlay(Symbol s) const;
-
-	bool makeMove(Symbol s, TilePosition pos);
-
 	const Board& getReadonlyBoard() const;
+
+	void newGame();
+
+	void finishTurn();
+	MoveValidity placeSymbolAt(TilePosition pos);
+	MoveValidity placeTriangleAt(TilePosition pos);
+
 private:
 	Symbol nextSymbol() const;
 
 	Board board_;
-	Symbol nextSymbolToPlay_;
+
+	Symbol currentPlayingSymbol_;
+	bool symbolPlaced_;
+	bool trianglePlaced_;
 };
 
