@@ -6,8 +6,8 @@
 //
 // Represents the game "referee".
 //
-// This class ensures that the player moves are valid. 
-// It also takes care of remembering which player has to play.
+// This class prevents the players from putting the board/game into a incoherent state by ensuring that every move or decision they make is valid.
+// Basically, this class contains the game logic and forces the player to respect the rules.
 //
 class GameCoordinator
 {
@@ -18,7 +18,7 @@ public:
 
 	void newGame();
 
-	void finishTurn();
+	bool finishTurn();
 	MoveValidity placeSymbolAt(TilePosition pos);
 	MoveValidity placeTriangleAt(TilePosition pos);
 

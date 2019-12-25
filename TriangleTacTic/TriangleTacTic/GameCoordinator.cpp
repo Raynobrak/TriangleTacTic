@@ -14,14 +14,15 @@ void GameCoordinator::newGame() {
 	trianglePlaced_ = false;
 }
 
-void GameCoordinator::finishTurn() {
+bool GameCoordinator::finishTurn() {
 	if (symbolPlaced_) {
 		currentPlayingSymbol_ = nextSymbol();
 		symbolPlaced_ = false;
 		trianglePlaced_ = false;
+		return true;
 	}
 	else {
-		throw std::logic_error("cannot finish the turn prematurely");
+		return false;
 	}
 }
 

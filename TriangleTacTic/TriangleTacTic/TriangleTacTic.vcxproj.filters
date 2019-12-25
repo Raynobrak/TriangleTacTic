@@ -6,10 +6,20 @@
     <ClInclude Include="GameCoordinator.h" />
     <ClInclude Include="TilePosition.h" />
     <ClInclude Include="MoveValidity.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="HumanPlayer.h" />
+    <ClInclude Include="AIPlayer.h" />
+    <ClInclude Include="board_constants.h" />
+    <ClInclude Include="PlayerType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="GameCoordinator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="HumanPlayer.cpp" />
+    <ClCompile Include="AIPlayer.cpp" />
   </ItemGroup>
 </Project>
