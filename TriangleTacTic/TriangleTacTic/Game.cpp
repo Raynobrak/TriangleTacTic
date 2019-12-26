@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "board_constants.h"
+#include <SFML/Graphics/CircleShape.hpp>
 
 sf::Vector2u WINDOW_SIZE = { 500u,500u };
 
@@ -30,7 +31,7 @@ void Game::start() {
 void Game::render() {
 	const auto& board = coordinator_.getReadonlyBoard();
 
-	window_.clear();
+	window_.clear({50,50,50});
 
 	sf::Vector2f boardStart = BOARD_MARGIN * sf::Vector2f(static_cast<float>(WINDOW_SIZE.x), static_cast<float>(WINDOW_SIZE.y));
 	float tileWidth = TILE_WIDTH * WINDOW_SIZE.x;
@@ -42,22 +43,49 @@ void Game::render() {
 			tile.setPosition(boardStart + sf::Vector2f(col * tileWidth, line * tileHeight));
 			tile.setSize({ tileWidth, tileHeight });
 			tile.setOutlineThickness(3.f);
-			tile.setOutlineColor(sf::Color::Cyan);
+			tile.setOutlineColor(sf::Color::Black);
+			tile.setFillColor({ 250,250,100 });
+
+			window_.draw(tile);
 
 			auto symbolOnTile = coordinator_.getReadonlyBoard().getSymbolAt({ col,line });
 			switch (symbolOnTile) {
 			case Symbol::Crosses:
-				tile.setFillColor(sf::Color::Red);
+			{
+				sf::RectangleShape stick1;
+				stick1.setSize({ tileWidth * 0.6f, 7.f });
+				stick1.setPosition(tile.getPosition() + sf::Vector2f(tileWidth, tileHeight) / 2.f);
+				stick1.setOrigin(stick1.getSize() / 2.f);
+				stick1.rotate(45.f);
+				stick1.setFillColor(sf::Color::Magenta);
+				sf::RectangleShape stick2 = stick1;
+				stick2.setRotation(-45.f);
+				window_.draw(stick1);
+				window_.draw(stick2);
 				break;
+			}	
 			case Symbol::Rounds:
-				tile.setFillColor(sf::Color::Blue);
-				break;
-			case Symbol::Triangles:
-				tile.setFillColor(sf::Color::Green);
-				break;
+			{
+				sf::CircleShape round;
+				round.setRadius(tileWidth * 0.6f / 2.f);
+				round.setPosition(tile.getPosition() + sf::Vector2f(tileWidth, tileHeight) / 2.f);
+				round.setOrigin(round.getRadius() * sf::Vector2f(1.f, 1.f));
+				round.setFillColor(sf::Color::Magenta);
+				window_.draw(round);
 			}
 
-			window_.draw(tile);
+			case Symbol::Triangles:
+			{
+				sf::CircleShape round;
+				round.setPointCount(3);
+				round.setRadius(tileWidth * 0.6f / 2.f);
+				round.setPosition(tile.getPosition() + sf::Vector2f(tileWidth, tileHeight) / 2.f);
+				round.setOrigin(round.getRadius() * sf::Vector2f(1.f, 1.f));
+				round.setFillColor(sf::Color::Magenta);
+				window_.draw(round);
+			}
+			}
+
 
 		}
 	}
