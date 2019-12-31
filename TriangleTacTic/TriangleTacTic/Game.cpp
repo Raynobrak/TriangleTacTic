@@ -2,22 +2,22 @@
 
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
 
 #include <iostream>
 
 #include "board_constants.h"
-#include <SFML/Graphics/CircleShape.hpp>
-
-sf::Vector2u WINDOW_SIZE = { 500u,500u };
 
 Game::Game(PlayerType player1, PlayerType player2) {
-	window_.create({ WINDOW_SIZE.x, WINDOW_SIZE.y }, "TriangleTacTic", sf::Style::Close);
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 4;
+	window_.create({ WINDOW_SIZE, WINDOW_SIZE }, "TriangleTacTic", sf::Style::Close, settings);
 	window_.setVerticalSyncEnabled(true);
 	gameOver_ = false;
 
 	p1_ = Player::createPlayerPtr(player1, coordinator_, window_);
 	p2_ = Player::createPlayerPtr(player1, coordinator_, window_);
+
+	initShapes();
 }
 
 void Game::start() {
@@ -28,65 +28,68 @@ void Game::start() {
 	}
 }
 
-void Game::render() {
+void Game::initShapes() {
+	tile_.setSize({ TILE_WIDTH_REAL, TILE_HEIGHT_REAL });
+	tile_.setOutlineThickness(TILES_OUTLINE_THICKNESS_N);
+	tile_.setOutlineColor(TILES_OUTLINE_COLOR);
+	tile_.setFillColor(TILES_COLOR);
+
+	halfCross_.setSize({ TILE_WIDTH_REAL * SYMBOLS_WIDTH_N, SYMBOLS_THICKNESS_N * TILE_WIDTH_REAL });
+	halfCross_.setPosition(tile_.getPosition() + sf::Vector2f(TILE_WIDTH_REAL, TILE_HEIGHT_REAL) / 2.f);
+	halfCross_.setOrigin(halfCross_.getSize() / 2.f);
+	halfCross_.setFillColor(CROSSES_COLOR);
+
+	round_.setRadius(TILE_WIDTH_REAL * SYMBOLS_WIDTH_N / 2.f);
+	round_.setOrigin(sf::Vector2f(round_.getRadius(), round_.getRadius()));
+	round_.setFillColor(sf::Color::Transparent);
+	round_.setOutlineThickness(-SYMBOLS_THICKNESS_N * TILE_WIDTH_REAL);
+	round_.setOutlineColor(ROUNDS_COLOR);
+
+	triangle_.setPointCount(3);
+	triangle_.setRadius(TILE_WIDTH_REAL * SYMBOLS_WIDTH_N / 2.f);
+	triangle_.setOrigin(sf::Vector2f(triangle_.getRadius(), triangle_.getRadius()));
+	triangle_.setFillColor(sf::Color::Transparent);
+	triangle_.setOutlineColor(TRIANGLES_COLOR);
+	triangle_.setOutlineThickness(-SYMBOLS_THICKNESS_N * TILE_WIDTH_REAL);
+}
+
+void Game::render() { 
 	const auto& board = coordinator_.getReadonlyBoard();
 
-	window_.clear({50,50,50});
+	window_.clear(BACKGROUND_COLOR);
 
-	sf::Vector2f boardStart = BOARD_MARGIN * sf::Vector2f(static_cast<float>(WINDOW_SIZE.x), static_cast<float>(WINDOW_SIZE.y));
-	float tileWidth = TILE_WIDTH * WINDOW_SIZE.x;
-	float tileHeight = TILE_WIDTH * WINDOW_SIZE.y;
+	sf::Vector2f boardStart = BOARD_MARGIN_N * sf::Vector2f(static_cast<float>(WINDOW_SIZE), static_cast<float>(WINDOW_SIZE));
 
 	for (pos_component_t line = 0; line < Board::UINT_BOARD_WIDTH; ++line) {
 		for (pos_component_t col = 0; col < Board::UINT_BOARD_WIDTH; ++col) {
-			sf::RectangleShape tile;
-			tile.setPosition(boardStart + sf::Vector2f(col * tileWidth, line * tileHeight));
-			tile.setSize({ tileWidth, tileHeight });
-			tile.setOutlineThickness(3.f);
-			tile.setOutlineColor(sf::Color::Black);
-			tile.setFillColor({ 250,250,100 });
 
-			window_.draw(tile);
+			tile_.setPosition(boardStart + sf::Vector2f(col * TILE_WIDTH_REAL, line * TILE_HEIGHT_REAL));
+			window_.draw(tile_);
 
-			auto symbolOnTile = coordinator_.getReadonlyBoard().getSymbolAt({ col,line });
+			Symbol symbolOnTile = coordinator_.getReadonlyBoard().getSymbolAt({ col,line });
+
 			switch (symbolOnTile) {
-			case Symbol::Crosses:
-			{
-				sf::RectangleShape stick1;
-				stick1.setSize({ tileWidth * 0.6f, 7.f });
-				stick1.setPosition(tile.getPosition() + sf::Vector2f(tileWidth, tileHeight) / 2.f);
-				stick1.setOrigin(stick1.getSize() / 2.f);
-				stick1.rotate(45.f);
-				stick1.setFillColor(sf::Color::Magenta);
-				sf::RectangleShape stick2 = stick1;
-				stick2.setRotation(-45.f);
-				window_.draw(stick1);
-				window_.draw(stick2);
-				break;
-			}	
-			case Symbol::Rounds:
-			{
-				sf::CircleShape round;
-				round.setRadius(tileWidth * 0.6f / 2.f);
-				round.setPosition(tile.getPosition() + sf::Vector2f(tileWidth, tileHeight) / 2.f);
-				round.setOrigin(round.getRadius() * sf::Vector2f(1.f, 1.f));
-				round.setFillColor(sf::Color::Magenta);
-				window_.draw(round);
-			}
+				case Symbol::Crosses: {
+					halfCross_.setPosition(tile_.getPosition() + HALF_TILE_SIZE);
+					halfCross_.setRotation(45.f);
+					window_.draw(halfCross_);
+					halfCross_.setRotation(-45.f);
+					window_.draw(halfCross_);
+					break;
+				}	
+				case Symbol::Rounds: {
+					round_.setPosition(tile_.getPosition() + HALF_TILE_SIZE);
+					window_.draw(round_);
+					break;
+				}
 
-			case Symbol::Triangles:
-			{
-				sf::CircleShape round;
-				round.setPointCount(3);
-				round.setRadius(tileWidth * 0.6f / 2.f);
-				round.setPosition(tile.getPosition() + sf::Vector2f(tileWidth, tileHeight) / 2.f);
-				round.setOrigin(round.getRadius() * sf::Vector2f(1.f, 1.f));
-				round.setFillColor(sf::Color::Magenta);
-				window_.draw(round);
+				case Symbol::Triangles: {
+					triangle_.setPosition(tile_.getPosition() + HALF_TILE_SIZE);
+					triangle_.move({ 0.f, SYMBOLS_THICKNESS_N * TILE_WIDTH_REAL });
+					window_.draw(triangle_);
+					break;
+				}
 			}
-			}
-
-
 		}
 	}
 

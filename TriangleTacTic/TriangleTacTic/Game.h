@@ -1,6 +1,8 @@
 #include "GameCoordinator.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 
 #include "Player.h"
 
@@ -12,7 +14,7 @@ public:
 	Game(PlayerType player1, PlayerType player2);
 	void start();
 private:
-	sf::Vector2f getWindowSize() const;
+	void initShapes();
 
 	void render();
 
@@ -22,5 +24,10 @@ private:
 
 	std::unique_ptr<Player> p1_;
 	std::unique_ptr<Player> p2_;
+
+	sf::RectangleShape tile_;
+	sf::RectangleShape halfCross_;
+	sf::CircleShape round_;
+	sf::CircleShape triangle_;
 };
 

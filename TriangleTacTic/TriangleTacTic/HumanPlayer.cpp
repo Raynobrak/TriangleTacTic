@@ -41,10 +41,10 @@ TilePosition HumanPlayer::getTilePosAt(sf::Vector2f pointOnWindow) const
 	auto windowSize = sf::Vector2f(window_.getSize());
 	const sf::Vector2f normalizedPosRelativeToWindow = { pointOnWindow.x / windowSize.x, pointOnWindow.y / windowSize.y };
 
-	if (normalizedPosRelativeToWindow.x > BOARD_MARGIN && normalizedPosRelativeToWindow.x < (1.f - BOARD_MARGIN) &&
-		normalizedPosRelativeToWindow.y > BOARD_MARGIN && normalizedPosRelativeToWindow.y < (1.f - BOARD_MARGIN)) {
+	if (normalizedPosRelativeToWindow.x > BOARD_MARGIN_N && normalizedPosRelativeToWindow.x < (1.f - BOARD_MARGIN_N) &&
+		normalizedPosRelativeToWindow.y > BOARD_MARGIN_N && normalizedPosRelativeToWindow.y < (1.f - BOARD_MARGIN_N)) {
 
-		const sf::Vector2f normalizedPosRelativeToGrid = (normalizedPosRelativeToWindow - sf::Vector2f(BOARD_MARGIN, BOARD_MARGIN)) / (1.f - 2.f * BOARD_MARGIN);
+		const sf::Vector2f normalizedPosRelativeToGrid = (normalizedPosRelativeToWindow - sf::Vector2f(BOARD_MARGIN_N, BOARD_MARGIN_N)) / (1.f - 2.f * BOARD_MARGIN_N);
 		float column = normalizedPosRelativeToGrid.x * static_cast<float>(Board::UINT_BOARD_WIDTH);
 		float line = normalizedPosRelativeToGrid.y * static_cast<float>(Board::UINT_BOARD_WIDTH);
 
